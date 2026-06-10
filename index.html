@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Your Melody Jackpot &mdash; Becky Warren presents</title>
+  <meta name="description" content="Pull the lever, win a mood and a style, and sing a couplet before the clock runs out. A melody game by Becky Warren.">
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ccircle cx='50' cy='50' r='46' fill='%23e8593a'/%3E%3Ctext x='50' y='68' font-size='52' text-anchor='middle' fill='%23f3ead7'%3E%E2%99%AA%3C/text%3E%3C/svg%3E">
+  <link rel="stylesheet" href="css/fonts.css">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+  <div class="stage" id="stage">
+    <div class="scaler" id="scaler">
+
+      <!-- night-sky sparkle field -->
+      <div class="sky" aria-hidden="true">
+        <span class="spark s1">&#10022;</span>
+        <span class="spark s2">&#10038;</span>
+        <span class="spark s3">&#10022;</span>
+        <span class="spark s4">&#10039;</span>
+        <span class="spark s5">&#10022;</span>
+        <span class="spark s6">&#10038;</span>
+      </div>
+
+      <!-- marquee -->
+      <header class="marquee">
+        <p class="presents">Becky Warren presents</p>
+        <h1 class="title">
+          <span class="t-script">Your Melody</span>
+          <span class="t-block"><span class="star">&#10022;</span> JACKPOT <span class="star">&#10022;</span></span>
+        </h1>
+        <p class="tagline" id="tagline">
+          <span class="tag-script">any melody counts</span>
+          <span class="tag-caps">THE ONLY JUDGE IS YOU</span>
+        </p>
+      </header>
+
+      <div class="floor">
+        <!-- machine -->
+        <div class="machine" id="machine">
+          <div class="machine-top" aria-hidden="true"></div>
+
+          <section class="reel-deck" aria-label="Slot machine reels">
+            <div class="reel-row">
+              <div class="reel-unit">
+                <div class="reel-window">
+                  <div class="reel-strip" id="strip-mood"></div>
+                  <div class="payline" aria-hidden="true"></div>
+                </div>
+                <div class="reel-label">THE MOOD</div>
+              </div>
+              <div class="reel-unit">
+                <div class="reel-window">
+                  <div class="reel-strip" id="strip-genre"></div>
+                  <div class="payline" aria-hidden="true"></div>
+                </div>
+                <div class="reel-label">THE STYLE</div>
+              </div>
+            </div>
+          </section>
+
+          <div class="placard-wrap">
+            <div class="placard" id="placard" aria-live="polite"></div>
+          </div>
+
+          <div class="ticker" aria-hidden="true">MOODS &#9733; STYLES &#9733; MELODIES NIGHTLY</div>
+        </div>
+
+        <!-- lever -->
+        <button class="lever" id="lever" aria-label="Pull the lever down to spin">
+          <span class="lever-arm" id="lever-arm">
+            <span class="knob"></span>
+            <span class="rod"></span>
+          </span>
+          <span class="lever-mount"></span>
+          <span class="lever-tag">PULL<br>FOR LUCK</span>
+        </button>
+      </div>
+
+      <footer class="house-row">
+        <button class="plate-btn" id="btn-about">ABOUT THE HOUSE</button>
+        <button class="plate-btn" id="btn-sound" aria-pressed="true">SOUND: ON</button>
+        <button class="plate-btn" id="btn-rec" aria-pressed="false" hidden>REC: OFF</button>
+        <button class="plate-btn" id="btn-setlist" hidden>SET LIST (0)</button>
+      </footer>
+      <p class="rec-note" id="rec-note" hidden>The house can only roll tape when
+      this game lives on a website &mdash; so record yourself on your phone, and
+      keep any melody you catch for later.</p>
+
+    </div>
+  </div>
+
+  <!-- about modal -->
+  <div class="modal-veil" id="about" hidden>
+    <div class="modal-card" role="dialog" aria-modal="true" aria-labelledby="about-title">
+      <h3 id="about-title"><span class="m-script">about</span> THE HOUSE</h3>
+      <p>I'm Becky Warren, a Nashville songwriter. I built this machine on a
+      hunch: melodies show up when the stakes are low and the lights are warm.</p>
+      <p>Pull the lever, take the mood and the style the wheels deal you, and
+      sing the couplet before you can overthink it. The band is loose and
+      nobody here reads music either.</p>
+      <p>More songs at
+      <a href="https://thisisbeckyw.substack.com" target="_blank" rel="noopener">thisisbeckyw.substack.com</a>.</p>
+      <button class="btn btn-coral" id="btn-close-about">BACK TO THE FLOOR</button>
+    </div>
+  </div>
+
+  <!-- welcome / roll-tape modal -->
+  <div class="modal-veil" id="welcome" hidden>
+    <div class="modal-card" role="dialog" aria-modal="true" aria-labelledby="welcome-title">
+      <h3 id="welcome-title"><span class="m-script">shall we</span> ROLL TAPE?</h3>
+      <p>If you give the house your microphone, it records each number you
+      sing &mdash; so any melody you stumble into is yours to keep. Takes go
+      on the set list, where you can play them back or download them.</p>
+      <p>Everything stays on this device. Nothing leaves the room.</p>
+      <div class="btn-row">
+        <button class="btn btn-quiet" id="btn-no-tape">NO THANKS</button>
+        <button class="btn btn-coral" id="btn-roll-tape">ROLL TAPE</button>
+      </div>
+      <p class="setlist-fine">You can flip recording on or off anytime at the
+      REC switch below the machine.</p>
+    </div>
+  </div>
+
+  <!-- set list modal -->
+  <div class="modal-veil" id="setlist" hidden>
+    <div class="modal-card" role="dialog" aria-modal="true" aria-labelledby="setlist-title">
+      <h3 id="setlist-title"><span class="m-script">tonight's</span> SET LIST</h3>
+      <div id="setlist-body"></div>
+      <p class="setlist-fine">Takes live only on this device and vanish when the
+      page closes &mdash; download the keepers.</p>
+      <button class="btn btn-coral" id="btn-close-setlist">BACK TO THE FLOOR</button>
+    </div>
+  </div>
+
+  <script src="js/data.js"></script>
+  <script src="js/audio.js"></script>
+  <script src="js/recorder.js"></script>
+  <script src="js/game.js"></script>
+</body>
+</html>

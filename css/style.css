@@ -1,0 +1,607 @@
+/* ============================================================
+   YOUR MELODY JACKPOT — flat letterpress, Golden Age Vegas
+   Palette pulled from mid-century matchbooks & brochures:
+   warm black, cream paper, coral-orange, aqua, marquee yellow.
+   ============================================================ */
+
+:root {
+  --black:  #161210;
+  --ink:    #211b17;
+  --cream:  #f3ead7;
+  --paper:  #efe4cc;
+  --coral:  #e2563a;
+  --coral-deep: #c64530;
+  --aqua:   #82cbce;
+  --aqua-deep: #3f9ba0;
+  --yellow: #f3cf4f;
+  --shadow: 3px 3px 0 rgba(0,0,0,0.55);
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+html, body { height: 100%; }
+
+body {
+  background-color: var(--black);
+  /* star specks, like the Lucky Casino night sky */
+  background-image:
+    radial-gradient(rgba(243,234,215,0.55) 1px, transparent 1.6px),
+    radial-gradient(rgba(243,234,215,0.30) 1px, transparent 1.6px);
+  background-size: 220px 190px, 140px 120px;
+  background-position: 30px 40px, 90px 80px;
+  color: var(--cream);
+  font-family: "Oswald", "Arial Narrow", sans-serif;
+  overflow: hidden;
+}
+
+/* ---------- stage & fit-to-viewport scaling ---------- */
+.stage {
+  height: 100vh;
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+}
+.scaler {
+  transform-origin: top center;
+  padding: 18px 16px 10px;
+  width: 740px;
+}
+
+/* ---------- sparkle field ---------- */
+.sky { position: absolute; inset: 0; pointer-events: none; }
+.spark {
+  position: absolute;
+  color: var(--cream);
+  opacity: 0.9;
+  font-size: 18px;
+  animation: twinkle 3.2s ease-in-out infinite;
+}
+.spark.s1 { top: 28px;  left: 6%;  color: var(--yellow); }
+.spark.s2 { top: 90px;  left: 14%; font-size: 12px; animation-delay: .7s; }
+.spark.s3 { top: 40px;  right: 8%; color: var(--aqua); animation-delay: 1.2s; }
+.spark.s4 { top: 120px; right: 15%; font-size: 12px; animation-delay: .4s; }
+.spark.s5 { top: 200px; left: 3%;  font-size: 13px; color: var(--coral); animation-delay: 1.8s; }
+.spark.s6 { top: 230px; right: 4%; font-size: 14px; animation-delay: 2.3s; }
+@keyframes twinkle {
+  0%, 100% { opacity: 0.25; transform: scale(0.8); }
+  50%      { opacity: 1;    transform: scale(1.1); }
+}
+
+/* ---------- marquee ---------- */
+.marquee { text-align: center; position: relative; }
+
+.presents {
+  font-family: "Yellowtail", cursive;
+  font-size: 30px;
+  color: var(--aqua);
+  transform: rotate(-2deg);
+  margin-bottom: -8px;
+}
+
+.title { line-height: 0.95; }
+.t-script {
+  display: block;
+  font-family: "Yellowtail", cursive;
+  font-weight: 400;
+  font-size: 64px;
+  color: var(--cream);
+  transform: rotate(-2deg);
+}
+.t-block {
+  display: block;
+  font-family: "Oswald", sans-serif;
+  font-weight: 600;
+  font-size: 58px;
+  letter-spacing: 0.16em;
+  color: var(--yellow);
+  margin-top: 2px;
+}
+.t-block .star { color: var(--coral); font-size: 0.6em; vertical-align: 0.25em; }
+
+.tagline { margin-top: 6px; }
+.tag-script {
+  font-family: "Yellowtail", cursive;
+  font-size: 26px;
+  color: var(--aqua);
+  margin-right: 10px;
+}
+.tag-caps {
+  font-family: "Oswald", sans-serif;
+  font-weight: 600;
+  font-size: 16px;
+  letter-spacing: 0.22em;
+  color: var(--cream);
+}
+
+/* ---------- floor: machine centered, lever hangs off its right ---------- */
+.floor {
+  margin-top: 16px;
+  position: relative;
+  width: 520px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+/* ---------- machine: flat coral cabinet ---------- */
+.machine {
+  width: 520px;
+  background: var(--coral);
+  border: 3px solid var(--ink);
+  box-shadow: var(--shadow);
+  position: relative;
+  /* faint horizontal pinstripes, like the Lucky tower */
+  background-image: repeating-linear-gradient(
+    0deg,
+    rgba(243,234,215,0.08) 0 2px,
+    transparent 2px 9px
+  );
+}
+.machine-top {
+  height: 14px;
+  background: var(--ink);
+  border-bottom: 3px solid var(--ink);
+  background-image: repeating-linear-gradient(
+    90deg,
+    var(--yellow) 0 10px, transparent 10px 24px
+  );
+}
+
+/* ---------- reels ---------- */
+.reel-deck { padding: 18px 22px 10px; }
+.reel-row { display: flex; gap: 18px; justify-content: center; }
+.reel-unit { flex: 1; text-align: center; }
+
+.reel-window {
+  height: 118px;
+  background: var(--paper);
+  border: 3px solid var(--ink);
+  box-shadow: inset 0 0 0 3px var(--cream), var(--shadow);
+  overflow: hidden;
+  position: relative;
+}
+.reel-strip { will-change: transform; }
+.reel-strip.blur { filter: blur(1.6px); }
+.reel-cell {
+  height: 46px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: "Oswald", sans-serif;
+  font-weight: 600;
+  font-size: 19px;
+  letter-spacing: 0.05em;
+  color: var(--ink);
+  padding: 0 6px;
+  white-space: nowrap;
+}
+.reel-cell.deco { color: var(--coral); font-size: 13px; letter-spacing: 0.4em; }
+.payline {
+  position: absolute;
+  left: 6px; right: 6px;
+  top: 50%;
+  height: 0;
+  border-top: 2px dashed rgba(226,86,58,0.45);
+  transform: translateY(-1px);
+  pointer-events: none;
+}
+
+.reel-label {
+  display: inline-block;
+  margin-top: 8px;
+  background: var(--ink);
+  color: var(--yellow);
+  font-weight: 600;
+  font-size: 14px;
+  letter-spacing: 0.28em;
+  padding: 4px 14px 3px 17px;
+}
+
+/* ---------- placard: cream printed card ---------- */
+.placard-wrap { padding: 8px 22px 14px; }
+.placard {
+  background: var(--paper);
+  border: 3px solid var(--ink);
+  box-shadow: inset 0 0 0 2px var(--coral), inset 0 0 0 5px var(--paper),
+              inset 0 0 0 6px var(--coral), var(--shadow);
+  min-height: 282px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  /* halftone paper grain */
+  background-image: radial-gradient(rgba(33,27,23,0.05) 1px, transparent 1.4px);
+  background-size: 7px 7px;
+}
+.placard-content { text-align: center; padding: 18px 26px; width: 100%; }
+
+.placard h2 {
+  font-family: "Yellowtail", cursive;
+  font-weight: 400;
+  font-size: 34px;
+  color: var(--coral);
+  transform: rotate(-1.5deg);
+}
+.placard .sub {
+  font-family: "Oswald", sans-serif;
+  font-weight: 600;
+  font-size: 16.5px;
+  letter-spacing: 0.22em;
+  color: var(--ink);
+  margin-top: 2px;
+}
+.placard .hint {
+  font-size: 15.5px;
+  font-weight: 400;
+  letter-spacing: 0.04em;
+  color: rgba(33,27,23,0.78);
+  margin-top: 10px;
+  line-height: 1.45;
+}
+.placard .smallprint {
+  font-size: 14px;
+  letter-spacing: 0.18em;
+  font-weight: 600;
+  color: rgba(33,27,23,0.55);
+  margin-top: 12px;
+}
+.rule {
+  width: 130px;
+  height: 7px;
+  margin: 8px auto 2px;
+  background:
+    linear-gradient(var(--aqua-deep), var(--aqua-deep)) center/100% 2px no-repeat,
+    radial-gradient(circle at center, var(--coral) 2.6px, transparent 3px) center/14px 7px no-repeat;
+}
+
+.combo {
+  font-family: "Oswald", sans-serif;
+  font-weight: 600;
+  font-size: 30px;
+  letter-spacing: 0.06em;
+  color: var(--ink);
+  margin: 12px 0 4px;
+  line-height: 1.25;
+}
+.combo .amp {
+  display: block;
+  font-family: "Yellowtail", cursive;
+  font-weight: 400;
+  font-size: 24px;
+  letter-spacing: 0;
+  color: var(--aqua-deep);
+  margin: 2px 0;
+}
+
+.lyric-card {
+  font-family: Georgia, "Times New Roman", serif;
+  font-style: italic;
+  font-size: 18.5px;
+  line-height: 1.55;
+  color: var(--ink);
+  background: var(--cream);
+  border: 2px solid var(--ink);
+  box-shadow: 2px 2px 0 rgba(0,0,0,0.35);
+  padding: 14px 18px;
+  margin: 12px auto 6px;
+  max-width: 420px;
+}
+
+/* count dots (result phase) */
+.count-row { margin-top: 10px; }
+.count-bulb {
+  display: inline-block;
+  width: 30px; height: 30px;
+  line-height: 28px;
+  margin: 0 7px;
+  border-radius: 50%;
+  border: 2px solid var(--ink);
+  background: var(--yellow);
+  color: var(--ink);
+  font-weight: 600;
+  font-size: 15px;
+  text-align: center;
+  transition: background 0.25s, color 0.25s;
+}
+.count-bulb.out { background: var(--paper); color: rgba(33,27,23,0.35); border-color: rgba(33,27,23,0.35); }
+
+/* timer dial (sing phase) */
+.timer-dial { position: relative; width: 92px; height: 92px; margin: 8px auto 0; }
+.timer-dial svg { width: 92px; height: 92px; transform: rotate(-90deg); }
+.timer-dial .track { fill: none; stroke: rgba(33,27,23,0.18); stroke-width: 9; }
+.timer-dial .arc   { fill: none; stroke: var(--aqua-deep); stroke-width: 9; transition: stroke-dashoffset 1s linear, stroke 0.3s; }
+.timer-dial.hot .arc { stroke: var(--coral); }
+.timer-num {
+  position: absolute; inset: 0;
+  display: flex; align-items: center; justify-content: center;
+  font-weight: 600; font-size: 26px; color: var(--ink);
+}
+.timer-dial.hot .timer-num { color: var(--coral-deep); }
+
+/* win / lose set pieces */
+.jackpot-banner {
+  font-family: "Oswald", sans-serif;
+  font-weight: 600;
+  font-size: 54px;
+  letter-spacing: 0.12em;
+  color: var(--coral);
+  text-shadow: 3px 3px 0 var(--yellow);
+  transform: rotate(-2deg);
+}
+.nodice {
+  font-family: "Oswald", sans-serif;
+  font-weight: 600;
+  font-size: 48px;
+  letter-spacing: 0.14em;
+  color: var(--ink);
+  text-shadow: 3px 3px 0 rgba(130,203,206,0.8);
+  transform: rotate(-1deg);
+}
+
+/* ---------- buttons ---------- */
+.btn-row { margin-top: 14px; display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; }
+.btn {
+  font-family: "Oswald", sans-serif;
+  font-weight: 600;
+  font-size: 16px;
+  letter-spacing: 0.14em;
+  padding: 10px 22px;
+  border: 2px solid var(--ink);
+  cursor: pointer;
+  box-shadow: var(--shadow);
+  transition: transform 0.08s, box-shadow 0.08s;
+}
+.btn:active { transform: translate(2px, 2px); box-shadow: 1px 1px 0 rgba(0,0,0,0.55); }
+.btn-coral { background: var(--coral); color: var(--cream); }
+.btn-coral:hover { background: var(--coral-deep); }
+.btn-quiet { background: var(--paper); color: var(--ink); }
+.btn-quiet:hover { background: var(--cream); }
+
+/* ---------- ticker strip ---------- */
+.ticker {
+  background: var(--ink);
+  color: var(--cream);
+  font-weight: 600;
+  font-size: 15px;
+  letter-spacing: 0.34em;
+  text-align: center;
+  padding: 7px 0 6px;
+  border-top: 3px solid var(--ink);
+}
+.machine.flash .ticker { background: var(--yellow); color: var(--ink); }
+
+/* ---------- lever ---------- */
+.lever {
+  position: absolute;
+  right: -96px;
+  top: 0;
+  bottom: 0;
+  width: 96px;
+  background: none;
+  border: none;
+  cursor: grab;
+  touch-action: none;
+  outline-offset: 4px;
+  --pull: 0;
+}
+.lever:active { cursor: grabbing; }
+.lever-arm {
+  position: absolute;
+  left: 16px;
+  bottom: 118px;
+  width: 14px;
+  height: 130px;
+  transform-origin: 7px 123px;
+  transform: rotate(calc(var(--pull) * 110deg));
+  display: block;
+}
+.lever-arm.snap { transition: transform 0.45s cubic-bezier(0.2, 2.2, 0.4, 1); }
+.rod {
+  position: absolute;
+  left: 4px; top: 14px; bottom: 0;
+  width: 7px;
+  background: var(--cream);
+  border: 2px solid var(--ink);
+}
+.knob {
+  position: absolute;
+  top: -8px; left: -10px;
+  width: 34px; height: 34px;
+  border-radius: 50%;
+  background: var(--coral);
+  border: 2px solid var(--ink);
+  box-shadow: inset -4px -4px 0 var(--coral-deep), var(--shadow);
+}
+.lever-mount {
+  position: absolute;
+  left: 4px;
+  bottom: 86px;
+  width: 38px; height: 38px;
+  background: var(--aqua);
+  border: 3px solid var(--ink);
+  box-shadow: var(--shadow);
+}
+.lever-tag {
+  position: absolute;
+  left: 0;
+  bottom: 36px;
+  width: 74px;
+  background: var(--yellow);
+  color: var(--ink);
+  border: 2px solid var(--ink);
+  box-shadow: 2px 2px 0 rgba(0,0,0,0.55);
+  font-weight: 600;
+  font-size: 13px;
+  letter-spacing: 0.14em;
+  line-height: 1.3;
+  padding: 5px 2px;
+  transform: rotate(-3deg);
+}
+
+/* ---------- house row ---------- */
+.house-row {
+  display: flex;
+  justify-content: center;
+  gap: 14px;
+  margin-top: 14px;
+}
+.plate-btn {
+  font-family: "Oswald", sans-serif;
+  font-weight: 600;
+  font-size: 14.5px;
+  letter-spacing: 0.22em;
+  color: var(--cream);
+  background: none;
+  border: 2px solid var(--cream);
+  padding: 7px 16px;
+  cursor: pointer;
+  transition: background 0.12s, color 0.12s;
+}
+.plate-btn:hover { background: var(--cream); color: var(--black); }
+
+/* ---------- modal ---------- */
+.modal-veil {
+  position: fixed; inset: 0;
+  background: rgba(22,18,16,0.82);
+  display: flex; align-items: center; justify-content: center;
+  z-index: 50;
+}
+.modal-veil[hidden] { display: none; }
+.modal-card {
+  width: min(460px, 88vw);
+  background: var(--paper);
+  border: 3px solid var(--ink);
+  box-shadow: inset 0 0 0 2px var(--coral), inset 0 0 0 5px var(--paper),
+              inset 0 0 0 6px var(--coral), 6px 6px 0 rgba(0,0,0,0.5);
+  color: var(--ink);
+  padding: 26px 30px;
+  text-align: center;
+}
+.modal-card h3 {
+  font-family: "Oswald", sans-serif;
+  font-weight: 600;
+  font-size: 22px;
+  letter-spacing: 0.18em;
+  margin-bottom: 12px;
+}
+.modal-card .m-script {
+  font-family: "Yellowtail", cursive;
+  font-weight: 400;
+  font-size: 30px;
+  letter-spacing: 0;
+  color: var(--coral);
+  margin-right: 8px;
+}
+.modal-card p { font-size: 15.5px; line-height: 1.55; margin-bottom: 10px; font-weight: 400; }
+.modal-card a { color: var(--coral-deep); font-weight: 600; }
+.modal-card .btn { margin-top: 8px; }
+
+/* ---------- jackpot confetti notes ---------- */
+.coin {
+  position: fixed;
+  top: -40px;
+  font-size: 26px;
+  z-index: 60;
+  pointer-events: none;
+  animation-name: coinfall;
+  animation-timing-function: linear;
+  animation-fill-mode: forwards;
+}
+.coin.c1 { color: var(--coral); }
+.coin.c2 { color: var(--aqua); }
+.coin.c3 { color: var(--yellow); }
+@keyframes coinfall {
+  to { transform: translateY(110vh) rotate(var(--r)) scale(var(--s)); }
+}
+
+/* machine shake on a loss */
+.machine.shake { animation: shake 0.45s; }
+@keyframes shake {
+  0%, 100% { transform: translateX(0); }
+  20% { transform: translateX(-7px) rotate(-0.4deg); }
+  40% { transform: translateX(6px) rotate(0.4deg); }
+  60% { transform: translateX(-4px); }
+  80% { transform: translateX(3px); }
+}
+
+/* marquee flash on a win */
+.scaler.win-flash .t-block { animation: marquee-pop 0.5s 3; }
+@keyframes marquee-pop {
+  50% { color: var(--coral); }
+}
+
+/* ---------- reduced motion ---------- */
+@media (prefers-reduced-motion: reduce) {
+  .spark { animation: none; opacity: 0.7; }
+  .reel-strip.blur { filter: none; }
+  .machine.shake { animation: none; }
+  .scaler.win-flash .t-block { animation: none; }
+  .lever-arm.snap { transition: none; }
+}
+
+/* ---------- take recorder ---------- */
+.rec-note {
+  text-align: center;
+  font-size: 14.5px;
+  font-weight: 400;
+  letter-spacing: 0.06em;
+  line-height: 1.5;
+  color: rgba(243,234,215,0.55);
+  max-width: 480px;
+  margin: 10px auto 0;
+}
+.rec-dot { color: var(--coral); animation: recblink 1.1s steps(1) infinite; }
+@keyframes recblink { 50% { opacity: 0.15; } }
+
+.setlist-empty {
+  font-size: 14px;
+  font-weight: 400;
+  color: rgba(33,27,23,0.7);
+  margin: 14px 0 18px;
+}
+.setlist-fine {
+  font-size: 13.5px !important;
+  letter-spacing: 0.1em;
+  color: rgba(33,27,23,0.55) !important;
+  margin-top: 12px;
+}
+.take-row {
+  border: 2px solid var(--ink);
+  background: var(--cream);
+  box-shadow: 2px 2px 0 rgba(0,0,0,0.3);
+  padding: 10px 12px;
+  margin: 10px 0;
+  text-align: left;
+}
+.take-label {
+  font-weight: 600;
+  font-size: 14.5px;
+  letter-spacing: 0.14em;
+  color: var(--coral-deep);
+  margin-bottom: 6px;
+}
+.take-row audio { width: 100%; height: 34px; margin-bottom: 8px; }
+.take-actions { display: flex; gap: 8px; justify-content: flex-end; }
+.take-actions .btn { font-size: 14px; padding: 6px 12px; text-decoration: none; }
+
+@media (prefers-reduced-motion: reduce) {
+  .rec-dot { animation: none; }
+}
+
+/* label that makes the couplet's job unmistakable */
+.lyric-label {
+  display: inline-block;
+  background: var(--ink);
+  color: var(--yellow);
+  font-weight: 600;
+  font-size: 14px;
+  letter-spacing: 0.22em;
+  padding: 5px 16px 4px 19px;
+  margin-top: 12px;
+  margin-bottom: -8px;
+  position: relative;
+  z-index: 1;
+  transform: rotate(-1deg);
+}
+
+/* dial waits while the player reads the lyrics */
+.timer-dial.waiting { opacity: 0.45; }
+.timer-dial { transition: opacity 0.3s; }
