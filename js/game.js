@@ -611,21 +611,16 @@
   const DECLINED_NOTE = "No tape tonight \u2014 the house won't record. " +
     "If you want to keep what you catch, roll your own on a phone or recorder.";
 
-  function rememberRecChoice() {
-    try { localStorage.setItem("mj-rec-choice", "1"); } catch (_) {}
-  }
-  function recChoiceMade() {
-    try { return localStorage.getItem("mj-rec-choice") === "1"; } catch (_) { return false; }
-  }
-
   if (Recorder.supported()) {
     recBtn.hidden = false;
     setlistBtn.hidden = false;
 
     const welcomeVeil = $("#welcome");
-    function closeWelcome() { welcomeVeil.hidden = true; rememberRecChoice(); }
+    function closeWelcome() { welcomeVeil.hidden = true; }
 
-    if (!recChoiceMade()) welcomeVeil.hidden = false;
+    // every visit starts with REC off, so the modal is the session's
+    // on-ramp — it shows on every load and dismisses in one click
+    welcomeVeil.hidden = false;
 
     $("#btn-roll-tape").addEventListener("click", async () => {
       Sound.click();
