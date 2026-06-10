@@ -31,7 +31,7 @@ body {
   background-position: 30px 40px, 90px 80px;
   color: var(--cream);
   font-family: "Oswald", "Arial Narrow", sans-serif;
-  overflow: hidden;
+  overflow: auto;
 }
 
 /* ---------- stage & fit-to-viewport scaling ---------- */

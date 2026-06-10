@@ -85,17 +85,35 @@
     const w = scaler.offsetWidth;
     const h = scaler.offsetHeight;
     if (!w || !h) return; // headless / not laid out yet
-    const scale = Math.min(
+    let scale = Math.min(
       1,
       (window.innerWidth - 8) / w,
       (window.innerHeight - 8) / h
     );
     scaler.style.transform = `scale(${scale})`;
+
+    /* Closed loop: offsetHeight predictions can miss (font swaps,
+       margins, absolutely positioned pieces), so measure what was
+       actually painted and correct until it truly fits. */
+    if (!scaler.getBoundingClientRect) return;
+    for (let i = 0; i < 3; i++) {
+      const r = scaler.getBoundingClientRect();
+      if (!r.height || !r.width) break;
+      const correction = Math.min(
+        1,
+        (window.innerHeight - 8 - Math.max(r.top, 0)) / r.height,
+        (window.innerWidth - 8) / r.width
+      );
+      if (correction >= 0.999) break;
+      scale *= correction;
+      scaler.style.transform = `scale(${scale})`;
+    }
   }
+  function lockAndFit() { lockPlacardHeight(); fitStage(); }
   window.addEventListener("resize", fitStage);
-  window.addEventListener("load", fitStage);
+  window.addEventListener("load", lockAndFit);
   if (document.fonts && document.fonts.ready) {
-    document.fonts.ready.then(fitStage).catch(() => {});
+    document.fonts.ready.then(lockAndFit).catch(() => {});
   }
 
   /* ---------- reels ---------- */
@@ -202,13 +220,18 @@
     spinReel(stripG, GENRES, spin.genre, durG, onStop);
   }
 
-  /* ---------- placard renderers ---------- */
+  /* ---------- placard HTML builders ----------
+     Pure string builders, used both to render live states and to
+     pre-measure the tallest possible placard at boot. */
   function setPlacard(html) {
     placard.innerHTML = `<div class="placard-content">${html}</div>`;
   }
 
-  function renderIdlePlacard() {
-    setPlacard(`
+  const DIAL_R = 52;
+  const DIAL_CIRC = (2 * Math.PI * DIAL_R).toFixed(1);
+
+  function htmlIdle() {
+    return `
       <h2>On stage tonight&hellip;</h2>
       <p class="sub">YOU, FRIEND. TWO SHOWS NIGHTLY.</p>
       <div class="rule"></div>
@@ -218,26 +241,24 @@
         <button class="btn btn-coral" id="btn-pull">PULL THE LEVER</button>
       </div>
       <p class="smallprint">NO COVER &middot; NO MINIMUM &middot; NO REFUNDS</p>
-    `);
-    $("#btn-pull").addEventListener("click", pullLever);
+    `;
   }
 
-  function renderSpinningPlacard() {
-    setPlacard(`
+  function htmlSpinning() {
+    return `
       <h2>The wheels are thinking&hellip;</h2>
       <p class="sub">WHERE THEY STOP, NOBODY KNOWS</p>
       <div class="rule"></div>
-    `);
+    `;
   }
 
-  function enterResult() {
-    state = "result";
-    setPlacard(`
+  function htmlResult(mood, genre) {
+    return `
       <h2>The house deals you&hellip;</h2>
       <div class="combo">
-        ${spin.mood}
+        ${mood}
         <span class="amp">in the style of</span>
-        ${spin.genre}
+        ${genre}
       </div>
       <div class="count-row" id="count-row">
         <span class="count-bulb">3</span>
@@ -249,7 +270,121 @@
         <button class="btn btn-coral" id="btn-lock">LOCK IT IN</button>
       </div>
       <p class="smallprint">LOCKS IN WHEN THE LIGHTS GO OUT</p>
-    `);
+    `;
+  }
+
+  function htmlSing(mood, genre, c, rolling) {
+    return `
+      <h2>Now appearing&hellip;</h2>
+      <p class="sub">${mood} &middot; ${genre}</p>
+      <div class="lyric-label">&#9834; SING THESE LYRICS &#9834;</div>
+      <div class="lyric-card">
+        ${c.l[0]}<br>${c.l[1]}
+      </div>
+      <div class="btn-row">
+        <button class="btn btn-coral" id="btn-sang">I SANG IT</button>
+      </div>
+      <div class="timer-dial waiting" id="dial">
+        <svg viewBox="0 0 120 120" aria-hidden="true">
+          <circle class="track" cx="60" cy="60" r="${DIAL_R}"></circle>
+          <circle class="arc" id="arc" cx="60" cy="60" r="${DIAL_R}"
+            stroke-dasharray="${DIAL_CIRC}" stroke-dashoffset="0"></circle>
+        </svg>
+        <div class="timer-num" id="timer-num">${SING_SECONDS}</div>
+      </div>
+      <p class="smallprint">${rolling ? '<span class="rec-dot">&#9679;</span> TAPE IS ROLLING &middot; ' : ""}CROONER'S HONOR</p>
+    `;
+  }
+
+  function savedPrefix(label) {
+    return `<span class="rec-dot">&#9679;</span> ${label} SAVED TO THE SET LIST &middot; `;
+  }
+
+  function htmlWin(genre, savedLabel) {
+    return `
+      <div class="jackpot-banner">JACKPOT</div>
+      <p class="sub">A GENUINE ${genre} NUMBER</p>
+      <div class="rule"></div>
+      <p class="hint">The house tips its hat. The pit boss wants your autograph.</p>
+      <div class="btn-row">
+        <button class="btn btn-coral" id="btn-again">PULL AGAIN</button>
+      </div>
+      <p class="smallprint">${savedLabel ? savedPrefix(savedLabel) : ""}HOT STREAKS DON'T WAIT</p>
+    `;
+  }
+
+  function htmlLose(savedLabel) {
+    return `
+      <div class="nodice">NO DICE</div>
+      <p class="sub">THE CLOCK PLAYS FOR THE HOUSE</p>
+      <div class="rule"></div>
+      <p class="hint">Happens to the best crooners. Even the King missed a cue.</p>
+      <div class="btn-row">
+        <button class="btn btn-coral" id="btn-again">DOUBLE OR NOTHING</button>
+      </div>
+      <p class="smallprint">${savedLabel ? savedPrefix(savedLabel) : ""}THE WHEELS FEEL GENEROUS TONIGHT. PROBABLY.</p>
+    `;
+  }
+
+  /* ---------- lock the placard at its tallest possible height ----------
+     The cabinet used to grow and shrink between phases because the sing
+     screen (and long couplets that wrap) exceeded the placard's minimum.
+     At boot we render every state into an invisible ghost — using the
+     longest mood, the longest genre, and the dozen longest couplets —
+     measure them with the real fonts, and pin the placard to the max.
+     The machine then keeps one size for the whole game, and fitStage
+     scales that worst case to the window. */
+  function lockPlacardHeight() {
+    placard.style.height = "auto";
+    const width = placard.clientWidth;
+    if (!width) return; // not laid out (headless) — CSS min-height fallback
+
+    const ghost = document.createElement("div");
+    ghost.className = "placard";
+    ghost.style.position = "absolute";
+    ghost.style.visibility = "hidden";
+    ghost.style.height = "auto";
+    ghost.style.minHeight = "0";
+    ghost.style.width = width + "px";
+    placard.parentNode.appendChild(ghost);
+
+    const longest = (arr) => arr.reduce((a, b) => (b.length > a.length ? b : a));
+    const longMood = longest(MOODS);
+    const longGenre = longest(GENRES);
+    const byMaxLine = COUPLETS.slice().sort((a, b) =>
+      Math.max(b.l[0].length, b.l[1].length) - Math.max(a.l[0].length, a.l[1].length)).slice(0, 6);
+    const byTotal = COUPLETS.slice().sort((a, b) =>
+      (b.l[0].length + b.l[1].length) - (a.l[0].length + a.l[1].length)).slice(0, 6);
+    const worst = [...new Set([...byMaxLine, ...byTotal])];
+    const savedLabel = "TAKE 99 \u2014 " + longMood + " \u00B7 " + longGenre;
+
+    const candidates = [
+      htmlIdle(), htmlSpinning(), htmlResult(longMood, longGenre),
+      htmlWin(longGenre, savedLabel), htmlLose(savedLabel),
+      ...worst.map((c) => htmlSing(longMood, longGenre, c, true))
+    ];
+    let max = 0;
+    for (const h of candidates) {
+      ghost.innerHTML = `<div class="placard-content">${h}</div>`;
+      max = Math.max(max, ghost.offsetHeight);
+    }
+    ghost.remove();
+    if (max > 0) placard.style.height = max + "px";
+  }
+
+  /* ---------- live renderers ---------- */
+  function renderIdlePlacard() {
+    setPlacard(htmlIdle());
+    $("#btn-pull").addEventListener("click", pullLever);
+  }
+
+  function renderSpinningPlacard() {
+    setPlacard(htmlSpinning());
+  }
+
+  function enterResult() {
+    state = "result";
+    setPlacard(htmlResult(spin.mood, spin.genre));
     $("#btn-respin").addEventListener("click", () => { Sound.click(); pullLever(); });
     $("#btn-lock").addEventListener("click", enterSing);
     $("#btn-lock").focus({ preventScroll: true });
@@ -280,29 +415,7 @@
       Recorder.start({ mood: spin.mood, genre: spin.genre });
 
     const c = drawCouplet();
-    const R = 52;
-    const CIRC = (2 * Math.PI * R).toFixed(1);
-
-    setPlacard(`
-      <h2>Now appearing&hellip;</h2>
-      <p class="sub">${spin.mood} &middot; ${spin.genre}</p>
-      <div class="lyric-label">&#9834; SING THESE LYRICS &#9834;</div>
-      <div class="lyric-card">
-        ${c.l[0]}<br>${c.l[1]}
-      </div>
-      <div class="timer-dial waiting" id="dial">
-        <svg viewBox="0 0 120 120" aria-hidden="true">
-          <circle class="track" cx="60" cy="60" r="${R}"></circle>
-          <circle class="arc" id="arc" cx="60" cy="60" r="${R}"
-            stroke-dasharray="${CIRC}" stroke-dashoffset="0"></circle>
-        </svg>
-        <div class="timer-num" id="timer-num">${SING_SECONDS}</div>
-      </div>
-      <div class="btn-row">
-        <button class="btn btn-coral" id="btn-sang">I SANG IT</button>
-      </div>
-      <p class="smallprint">${takeRolling ? '<span class="rec-dot">&#9679;</span> TAPE IS ROLLING &middot; ' : ""}CROONER'S HONOR</p>
-    `);
+    setPlacard(htmlSing(spin.mood, spin.genre, c, takeRolling));
     $("#btn-sang").addEventListener("click", () => endRound(true));
     $("#btn-sang").focus({ preventScroll: true });
 
@@ -318,19 +431,19 @@
       dial.classList.remove("waiting");
       Sound.tap();
       singTimer = setInterval(() => {
-      remaining--;
-      if (remaining < 0) {
-        clearInterval(singTimer); singTimer = null;
-        endRound(false);
-        return;
-      }
-      num.textContent = remaining;
-      arc.style.strokeDashoffset =
-        (CIRC * (1 - remaining / SING_SECONDS)).toFixed(1);
-      if (remaining <= 5 && remaining > 0) {
-        dial.classList.add("hot");
-        Sound.tapHot();
-      }
+        remaining--;
+        if (remaining < 0) {
+          clearInterval(singTimer); singTimer = null;
+          endRound(false);
+          return;
+        }
+        num.textContent = remaining;
+        arc.style.strokeDashoffset =
+          (DIAL_CIRC * (1 - remaining / SING_SECONDS)).toFixed(1);
+        if (remaining <= 5 && remaining > 0) {
+          dial.classList.add("hot");
+          Sound.tapHot();
+        }
       }, 1000);
     }, READ_BEAT_MS);
   }
@@ -347,8 +460,7 @@
         updateRecUi();
         if (!take) return;
         const sp = placard.querySelector(".smallprint");
-        if (sp) sp.innerHTML =
-          `<span class="rec-dot">&#9679;</span> ${take.label} SAVED TO THE SET LIST &middot; ` + sp.innerHTML;
+        if (sp) sp.innerHTML = savedPrefix(take.label) + sp.innerHTML;
       });
     }
 
@@ -361,30 +473,12 @@
         scaler.classList.remove("win-flash");
       }, 1600);
       coinShower();
-      setPlacard(`
-        <div class="jackpot-banner">JACKPOT</div>
-        <p class="sub">A GENUINE ${spin.genre} NUMBER</p>
-        <div class="rule"></div>
-        <p class="hint">The house tips its hat. The pit boss wants your autograph.</p>
-        <div class="btn-row">
-          <button class="btn btn-coral" id="btn-again">PULL AGAIN</button>
-        </div>
-        <p class="smallprint">HOT STREAKS DON'T WAIT</p>
-      `);
+      setPlacard(htmlWin(spin.genre, null));
     } else {
       Sound.nodice();
       machine.classList.add("shake");
       setTimeout(() => machine.classList.remove("shake"), 500);
-      setPlacard(`
-        <div class="nodice">NO DICE</div>
-        <p class="sub">THE CLOCK PLAYS FOR THE HOUSE</p>
-        <div class="rule"></div>
-        <p class="hint">Happens to the best crooners. Even the King missed a cue.</p>
-        <div class="btn-row">
-          <button class="btn btn-coral" id="btn-again">DOUBLE OR NOTHING</button>
-        </div>
-        <p class="smallprint">THE WHEELS FEEL GENEROUS TONIGHT. PROBABLY.</p>
-      `);
+      setPlacard(htmlLose(null));
     }
     const again = $("#btn-again");
     again.addEventListener("click", () => { Sound.click(); pullLever(); });
@@ -621,5 +715,6 @@
   /* ---------- boot ---------- */
   fillIdleReels();
   renderIdlePlacard();
-  fitStage();
+  lockAndFit();
+  setTimeout(lockAndFit, 400); // settle pass after fonts/paint
 })();
