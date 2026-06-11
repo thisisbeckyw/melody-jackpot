@@ -246,7 +246,7 @@
 
   function htmlSpinning() {
     return `
-      <h2>The wheels are thinking&hellip;</h2>
+      <h2>The wheels are turning&hellip;</h2>
       <p class="sub">WHERE THEY STOP, NOBODY KNOWS</p>
       <div class="rule"></div>
     `;

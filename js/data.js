@@ -9,17 +9,17 @@ const MOODS = [
   "ANGRY", "HAPPY", "SLEEPY", "SCARED", "LOVING", "JEALOUS",
   "SAD", "EXCITED", "NERVOUS", "PROUD", "LONELY", "HOPEFUL",
   "GRUMPY", "EMBARRASSED", "HEARTBROKEN", "SILLY",
-  "NOSTALGIC", "SMUG", "RESTLESS", "SUSPICIOUS", "DETERMINED"
+  "NOSTALGIC", "ARROGANT", "RELAXED", "TRIUMPHANT", "DETERMINED"
 ];
 
 const GENRES = [
-  "ROCK", "OPERA", "KIDS' MUSIC", "FOLK", "RAP", "PUNK",
+  "CLASSIC ROCK", "OPERA", "KIDS' MUSIC", "FOLK", "RAP", "PUNK",
   "MUSICAL THEATER", "R&B", "GRUNGE", "FUNK", "GOSPEL", "COUNTRY",
-  "DISCO", "REGGAE", "JAZZ", "BLUES", "SURF ROCK", "HEAVY METAL",
-  "DOO-WOP", "LULLABY", "SPRINGSTEEN", "BRUNO MARS", "THE BEATLES",
-  "SHERYL CROW", "DOLLY PARTON", "JOHNNY CASH", "ABBA",
-  "BOSSA NOVA", "BLUEGRASS", "MOTOWN", "YACHT ROCK", "NEW WAVE",
-  "SKA", "BARBERSHOP QUARTET", "POLKA", "ELVIS", "QUEEN"
+  "DISCO", "REGGAE", "JAZZ", "BLUES", "INDIE ROCK", "HEAVY METAL",
+  "DOO-WOP", "LULLABY", "SPRINGSTEEN", "ROLLING STONES", "THE BEATLES",
+  "BEYONCE", "DOLLY PARTON", "TAYLOR SWIFT", "WEIRD AL",
+  "WALTZ", "BLUEGRASS", "MOTOWN", "YACHT ROCK", "POP",
+  "DANCE MUSIC", "EMO", "POLKA", "ELVIS", "BRITNEY SPEARS"
 ];
 
 /* 100 couplets. e = emotion tag, g = genre tag, l = [line1, line2] */
@@ -39,8 +39,8 @@ const COUPLETS = [
   { e: "HAPPY", g: "THE BEATLES", l: ["The kettle's on, the toast is warm, the morning's soft and slow,", "And every little thing I see has got a golden glow."] },
   { e: "HAPPY", g: "FUNK", l: ["Got a brand-new pair of socks and they are striped in every hue,", "My feet are throwing parties and your feet are invited too."] },
   { e: "HAPPY", g: "FOLK", l: ["The garden's full of tomatoes and the porch is full of friends,", "I hope this summer evening never finds a way to end."] },
-  { e: "HAPPY", g: "BRUNO MARS", l: ["Caught my reflection in the window, gave myself a wink,", "Today is going smoother than a roller-skating rink."] },
-  { e: "HAPPY", g: "SURF ROCK", l: ["The sun is up, the tide is right, my board is waxed and ready,", "Gonna ride that wave of happy till my legs go all spaghetti."] },
+  { e: "HAPPY", g: "POP", l: ["Caught my reflection in the window, gave myself a wink,", "Today is going smoother than a roller-skating rink."] },
+  { e: "HAPPY", g: "INDIE ROCK", l: ["The sun is up, the tide is right, my board is waxed and ready,", "Gonna ride that wave of happy till my legs go all spaghetti."] },
 
   // ---- SLEEPY ----
   { e: "SLEEPY", g: "PUNK", l: ["I stayed up way too late and now my eyelids feel like lead,", "The only mosh pit I want now is the pillows on my bed."] },
@@ -65,12 +65,12 @@ const COUPLETS = [
   { e: "LOVING", g: "R&B", l: ["You saved me the last slice of pie and didn't say a word,", "That's the sweetest love song that this heart has ever heard."] },
   { e: "LOVING", g: "OPERA", l: ["My love is like a thunderstorm that rattles every wall,", "I'll sing it from the rooftop so the neighbors hear it all!"] },
   { e: "LOVING", g: "MUSICAL THEATER", l: ["When you walk into the room the spotlight finds your face,", "The orchestra starts swelling and my heart picks up the pace."] },
-  { e: "LOVING", g: "SHERYL CROW", l: ["We're driving with the windows down, the radio's our choir,", "And loving you is easy as a Sunday by the fire."] },
+  { e: "LOVING", g: "BEYONCE", l: ["We're driving with the windows down, the radio's our choir,", "And loving you is easy as a Sunday by the fire."] },
 
   // ---- JEALOUS ----
   { e: "JEALOUS", g: "FUNK", l: ["Your sandwich looks way better than the sad one on my plate,", "I'm scooting my chair closer before it gets too late."] },
   { e: "JEALOUS", g: "BLUES", l: ["My neighbor's lawn is greener and his truck is shiny new,", "I got a rusty wagon and a window with a view."] },
-  { e: "JEALOUS", g: "BRUNO MARS", l: ["You got the fresh white sneakers that I wanted for so long,", "Now I'm staring at your feet and writing this whole song."] },
+  { e: "JEALOUS", g: "ROLLING STONES", l: ["You got the fresh white sneakers that I wanted for so long,", "Now I'm staring at your feet and writing this whole song."] },
   { e: "JEALOUS", g: "OPERA", l: ["Her trophy shelf is gleaming with a hundred golden cups,", "Mine holds a single ribbon that just says 'thanks for showing up.'"] },
   { e: "JEALOUS", g: "COUNTRY", l: ["Your dog can fetch the paper and roll over on command,", "My dog just ate my homework and a quarter pound of sand."] },
   { e: "JEALOUS", g: "DISCO", l: ["Everybody's dancing with the partner that I wanted,", "I'm spinning solo anyway, refusing to be daunted."] },
@@ -78,19 +78,19 @@ const COUPLETS = [
   // ---- SAD ----
   { e: "SAD", g: "BLUES", l: ["My coffee's gone lukewarm and the sky's been gray all day,", "Even my reflection looks like it might walk away."] },
   { e: "SAD", g: "GRUNGE", l: ["The rain is on the window and my band just broke apart,", "There's feedback in my speakers and an echo in my heart."] },
-  { e: "SAD", g: "JOHNNY CASH", l: ["The midnight train is rolling and it isn't coming back,", "I'm singing low and lonesome to the clicking of the track."] },
+  { e: "SAD", g: "ELVIS", l: ["The midnight train is rolling and it isn't coming back,", "I'm singing low and lonesome to the clicking of the track."] },
   { e: "SAD", g: "OPERA", l: ["The ice cream truck just passed me by, it didn't even slow,", "I lift my voice in sorrow so the whole town hears my woe!"] },
   { e: "SAD", g: "FOLK", l: ["The summer birds have flown away, the garden's turning brown,", "I'm humming something quiet as the leaves come drifting down."] },
   { e: "SAD", g: "KIDS' MUSIC", l: ["My balloon flew up and up until it disappeared from view,", "Now my string is empty and my crayons all feel blue."] },
   { e: "SAD", g: "MUSICAL THEATER", l: ["The show is over, houselights up, the crowd has gone away,", "I'm singing to the empty seats, pretending that they stayed."] },
 
   // ---- EXCITED ----
-  { e: "EXCITED", g: "SURF ROCK", l: ["The waves are up, the van is packed, I cannot sit still,", "We're peeling out at sunrise, racing daylight down the hill."] },
+  { e: "EXCITED", g: "INDIE ROCK", l: ["The waves are up, the van is packed, I cannot sit still,", "We're peeling out at sunrise, racing daylight down the hill."] },
   { e: "EXCITED", g: "KIDS' MUSIC", l: ["It's my birthday in the morning and I cannot fall asleep,", "I counted seven hundred extra jumpy birthday sheep!"] },
   { e: "EXCITED", g: "RAP", l: ["The pizza's in the oven and the timer says one minute,", "This kitchen is a stadium and I'm the champion in it."] },
   { e: "EXCITED", g: "DISCO", l: ["They just announced the encore and my hands are in the air,", "I've got glitter on my jacket and confetti in my hair."] },
   { e: "EXCITED", g: "SPRINGSTEEN", l: ["We got the tank filled up and we are rolling out tonight,", "The radio is blasting and the city's burning bright."] },
-  { e: "EXCITED", g: "ABBA", l: ["The mirror ball is spinning and my heart is set on go,", "Tonight we're gonna dance until the morning starts to show."] },
+  { e: "EXCITED", g: "BRITNEY SPEARS", l: ["The mirror ball is spinning and my heart is set on go,", "Tonight we're gonna dance until the morning starts to show."] },
 
   // ---- NERVOUS ----
   { e: "NERVOUS", g: "JAZZ", l: ["My palms are doing drum rolls and my knees won't keep the beat,", "I'm improvising confidence with two left-handed feet."] },
@@ -106,11 +106,11 @@ const COUPLETS = [
   { e: "PROUD", g: "RAP", l: ["I parallel parked perfectly on my very first try,", "Stand back and watch me strut — I'm the parking samurai."] },
   { e: "PROUD", g: "SPRINGSTEEN", l: ["I fixed that rusty engine that they swore would never run,", "Now listen to her roaring like a river in the sun."] },
   { e: "PROUD", g: "MUSICAL THEATER", l: ["I hit the highest note tonight, the one I always crack,", "The balcony stood up and I am never looking back!"] },
-  { e: "PROUD", g: "BRUNO MARS", l: ["I ironed my own dress shirt and it's crisper than the breeze,", "When I step into the office, hold your applause, please."] },
+  { e: "PROUD", g: "BEYONCE", l: ["I ironed my own dress shirt and it's crisper than the breeze,", "When I step into the office, hold your applause, please."] },
 
   // ---- LONELY ----
   { e: "LONELY", g: "BLUES", l: ["The diner's nearly empty and my booth is built for four,", "I'm sharing fries with nobody and watching out the door."] },
-  { e: "LONELY", g: "JOHNNY CASH", l: ["I'm the only soul for miles on this long and dusty road,", "Just me, my shadow, and a guitar carrying the load."] },
+  { e: "LONELY", g: "POP", l: ["I'm the only soul for miles on this long and dusty road,", "Just me, my shadow, and a guitar carrying the load."] },
   { e: "LONELY", g: "GRUNGE", l: ["Everyone's at practice and my afternoon is free,", "The garage sounds awful empty when the band is minus me."] },
   { e: "LONELY", g: "FOLK", l: ["The lighthouse keeper waves at ships that never come to shore,", "I know just how he's feeling when my phone don't ring no more."] },
   { e: "LONELY", g: "LULLABY", l: ["The house is awful quiet and it's only me tonight,", "So I'm humming harmony with the refrigerator light."] },
@@ -121,7 +121,7 @@ const COUPLETS = [
   { e: "HOPEFUL", g: "FOLK", l: ["We planted in the winter what we couldn't see in spring,", "But every seed is down there learning how to do its thing."] },
   { e: "HOPEFUL", g: "SPRINGSTEEN", l: ["This town has seen some hard years but the lights are coming on,", "We'll be dancing on the boardwalk by the breaking of the dawn."] },
   { e: "HOPEFUL", g: "REGGAE", l: ["The rain has done its talking, now the sun gets back its say,", "We'll be barefoot in the garden by the middle of the day."] },
-  { e: "HOPEFUL", g: "SHERYL CROW", l: ["The lease is up, the car is packed, the map is on my knees,", "The first day of the rest of it is riding on this breeze."] },
+  { e: "HOPEFUL", g: "WALTZ", l: ["The lease is up, the car is packed, the map is on my knees,", "The first day of the rest of it is riding on this breeze."] },
   { e: "HOPEFUL", g: "KIDS' MUSIC", l: ["Tomorrow's like a present that is sitting on the shelf,", "I can't wait to unwrap it, so I'm high-fiving myself!"] },
 
   // ---- GRUMPY ----
@@ -137,7 +137,7 @@ const COUPLETS = [
   { e: "EMBARRASSED", g: "MUSICAL THEATER", l: ["I tripped on my grand entrance, slid the whole way 'cross the floor,", "So I jazz-handed the landing and they're begging for more."] },
   { e: "EMBARRASSED", g: "RAP", l: ["I called my teacher 'Mom' today, the whole class heard it clear,", "I'm thinking of transferring to the moon for one school year."] },
   { e: "EMBARRASSED", g: "COUNTRY", l: ["My yodel cracked in public at the grocery checkout line,", "The cashier said 'God bless you' and I said that I was fine."] },
-  { e: "EMBARRASSED", g: "BRUNO MARS", l: ["I moonwalked through the lobby feeling smoother than the breeze,", "Then spotted toilet paper trailing off my shoe. Oh, jeez."] },
+  { e: "EMBARRASSED", g: "BEYONCE", l: ["I moonwalked through the lobby feeling smoother than the breeze,", "Then spotted toilet paper trailing off my shoe. Oh, jeez."] },
   { e: "EMBARRASSED", g: "OPERA", l: ["I sneezed during the quiet part, it echoed off the dome,", "Three hundred heads all turned at once. I sang, 'I'M GOING HOME.'"] },
 
   // ---- HEARTBROKEN ----
@@ -151,7 +151,7 @@ const COUPLETS = [
   // ---- SILLY ----
   { e: "SILLY", g: "KIDS' MUSIC", l: ["My socks are on my ears because my ears were feeling cold,", "Don't knock it till you've tried it, friend — it never gets old!"] },
   { e: "SILLY", g: "FUNK", l: ["The funky chicken called me up and challenged me to dance,", "I said, 'Bring your finest feathers, bird — you haven't got a chance.'"] },
-  { e: "SILLY", g: "SURF ROCK", l: ["A seagull stole my sandwich and surfed off on my board,", "Now he's the local legend and I'm the one ignored."] },
+  { e: "SILLY", g: "INDIE ROCK", l: ["A seagull stole my sandwich and surfed off on my board,", "Now he's the local legend and I'm the one ignored."] },
   { e: "SILLY", g: "RAP", l: ["My goldfish is my hype man, he bubbles when I rhyme,", "We're dropping our new mixtape, one bubble at a time."] },
   { e: "SILLY", g: "OPERA", l: ["The drama of the moment! The yogurt has expired!", "I shall sing of this great tragedy until my lungs are tired!"] },
   { e: "SILLY", g: "THE BEATLES", l: ["A walrus in a necktie asked me kindly for the time,", "I told him it was half past strange and quarter after rhyme."] },

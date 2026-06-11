@@ -32,6 +32,7 @@ body {
   color: var(--cream);
   font-family: "Oswald", "Arial Narrow", sans-serif;
   overflow: auto;
+  font-size: 125%;
 }
 
 /* ---------- stage & fit-to-viewport scaling ---------- */
